@@ -330,6 +330,7 @@ public class mainCode extends JFrame{
       arrayOfNodes gainNodes1Iteration = new arrayOfNodes(); 								 //Which nodes were swapped
       arrayOfNodes gainNodes2Iteration = new arrayOfNodes(); 								 //Which nodes were swapped
       klAlg myKl = new klAlg();                                                              //Create new klAlgorithm Object
+      bestObject bestCurrent = new bestObject(new Nodes("null",0,0,0,0,0),new Nodes("null",0,0,0,0,0),0);
       for (int x = 0; x<Iterations; x++){
 	      for (int l = 0; l<optimizedPartition.partition0.size(); l++){                          //Calculate Parameters for partition0
 	         double myParameterArray[] = myKl.getNodeParameters(optimizedPartition, optimizedPartition.getNodeAtIndex(0, l), EdgesArr);
@@ -346,7 +347,7 @@ public class mainCode extends JFrame{
 	      }      
 	      partitionSetup iteratedPartition = partition.makeDeepCopyPartition(optimizedPartition);        //Create Deep Copy of Old Partition for nodes not optimized
 	      double storeImprovement = 0;
-	      bestObject bestCurrent = new bestObject(new Nodes("null",0,0,0,0,0),new Nodes("null",0,0,0,0,0),0);
+	   
 	      for (int l = 0; l<iteratedPartition.partition0.size(); l++){ //iteratedPartition.partition0.size()
 	    	  //System.out.println("l = " + l);   
 	    	  for (int m = 0; m<iteratedPartition.partition0.size()-1; m++){ //iteratedPartition.partition1.size()
@@ -356,7 +357,7 @@ public class mainCode extends JFrame{
 	    		  //System.out.println("m = " + m);   
 	    		  double myG = iteratedPartition.getNodeAtIndex(0, l).getD() + iteratedPartition.getNodeAtIndex(1, m).getD() - 2*myKl.getCost(iteratedPartition.getNodeAtIndex(0, l).getNodeName(), iteratedPartition.getNodeAtIndex(1, m).getNodeName(), EdgesArr);
 	    		 //System.out.println(myG);
-	    		  if (bestCurrent.getGain() < myG){
+	    		  if (bestCurrent.getGain() < myG || bestCurrent.getNode1().getNodeName().equals("null")){
 	    			  bestCurrent.setNode1(iteratedPartition.getNodeAtIndex(0, l));
 	    			  bestCurrent.setNode2(iteratedPartition.getNodeAtIndex(1, m));
 	    			  bestCurrent.setGain(myG);
@@ -369,6 +370,8 @@ public class mainCode extends JFrame{
 			      gainIteration.add(storeImprovement);
 			      gainNodes1Iteration.addNode(bestCurrent.getNode1().getNodeName(),bestCurrent.getNode1().getD(),bestCurrent.getNode1().getI(), bestCurrent.getNode1().getE(), bestCurrent.getNode1().getX(), bestCurrent.getNode1().getY());
 			      gainNodes2Iteration.addNode(bestCurrent.getNode2().getNodeName(),bestCurrent.getNode2().getD(),bestCurrent.getNode2().getI(), bestCurrent.getNode2().getE(), bestCurrent.getNode2().getX(), bestCurrent.getNode2().getY());
+			      System.out.println("Iteration = " + x);
+			      System.out.println(bestCurrent.getNode1());
 			      myKl.interchange(bestCurrent.getNode1(), bestCurrent.getNode2(), optimizedPartition);
 	       	  
 			      for (int f = 0; f<optimizedPartition.partition0.size(); f++){                          //Calculate Parameters for partition0
