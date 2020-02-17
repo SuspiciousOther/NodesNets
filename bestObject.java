@@ -12,11 +12,11 @@ public class bestObject {
 	    }
 
 		public void setNode1(Nodes myNode){
-			this.node1 = myNode;		
+			this.node1 = new Nodes(myNode.getNodeName(), myNode.getD(), myNode.getI(), myNode.getE(), myNode.getX(), myNode.getY());		
 		}
 		
 		public void setNode2(Nodes myNode){
-			this.node2 = myNode;		
+			this.node2 = new Nodes(myNode.getNodeName(), myNode.getD(), myNode.getI(), myNode.getE(), myNode.getX(), myNode.getY());				
 		}	
 		
 		public void setGain(double gain){
