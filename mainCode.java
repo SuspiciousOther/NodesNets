@@ -215,7 +215,7 @@ public class mainCode extends JFrame{
       
       //Select Nodes
       
-      JFileChooser chooserNodes = new JFileChooser();
+      /*JFileChooser chooserNodes = new JFileChooser();
       FileNameExtensionFilter filterNodes = new FileNameExtensionFilter(
               "nodes files", "txt");
       chooserNodes.setFileFilter(filterNodes);
@@ -230,9 +230,9 @@ public class mainCode extends JFrame{
       
       //System.out.println(fileNodes + " chosen.");
       File file1 = new File( chooserNodes.getSelectedFile().getAbsolutePath());
-      File file2 = new File( chooserNets.getSelectedFile().getAbsolutePath());   
-      //File file1 = new File("F:\\Java Workspaces\\PhysDesignA1\\Files\\spp_N193_E227_R11_153.nodes.txt");
-      //File file2 = new File("F:\\Java Workspaces\\PhysDesignA1\\Files\\spp_N193_E227_R11_153.nets.txt");   
+      File file2 = new File( chooserNets.getSelectedFile().getAbsolutePath());   */
+      File file1 = new File("F:\\Java Workspaces\\PhysDesignA1\\Files\\spp_N193_E227_R11_153.nodes.txt");
+      File file2 = new File("F:\\Java Workspaces\\PhysDesignA1\\Files\\spp_N193_E227_R11_153.nets.txt");   
       Scanner sc1 = new Scanner(file1); 
       Scanner sc2 = new Scanner(file2); 
       String s = new String();
@@ -347,32 +347,37 @@ public class mainCode extends JFrame{
 	      }      
 	      partitionSetup iteratedPartition = partition.makeDeepCopyPartition(optimizedPartition);        //Create Deep Copy of Old Partition for nodes not optimized
 	      double storeImprovement = 0;
-	   
+	      bestCurrent.setGain(0);
+	      double myG = 0;
 	      for (int l = 0; l<iteratedPartition.partition0.size(); l++){ //iteratedPartition.partition0.size()
 	    	  //System.out.println("l = " + l);   
-	    	  for (int m = 0; m<iteratedPartition.partition0.size()-1; m++){ //iteratedPartition.partition1.size()
+	    	  for (int m = 0; m<iteratedPartition.partition1.size(); m++){ //iteratedPartition.partition1.size()
 	    		  //System.out.println(iteratedPartition.getNodeAtIndex(1, m));  
 	    		  //System.out.println("Optmized Size = " + optimizedPartition.partition1.size());  
 	    		  //System.out.println("Iterated Size = " + iteratedPartition.partition1.size());  
 	    		  //System.out.println("m = " + m);   
-	    		  double myG = iteratedPartition.getNodeAtIndex(0, l).getD() + iteratedPartition.getNodeAtIndex(1, m).getD() - 2*myKl.getCost(iteratedPartition.getNodeAtIndex(0, l).getNodeName(), iteratedPartition.getNodeAtIndex(1, m).getNodeName(), EdgesArr);
+	    		  myG = iteratedPartition.getNodeAtIndex(0, l).getD() + iteratedPartition.getNodeAtIndex(1, m).getD() - 2*myKl.getCost(iteratedPartition.getNodeAtIndex(0, l).getNodeName(), iteratedPartition.getNodeAtIndex(1, m).getNodeName(), EdgesArr);
 	    		 //System.out.println(myG);
 	    		  if (bestCurrent.getGain() < myG || bestCurrent.getNode1().getNodeName().equals("null")){
 	    			  bestCurrent.setNode1(iteratedPartition.getNodeAtIndex(0, l));
 	    			  bestCurrent.setNode2(iteratedPartition.getNodeAtIndex(1, m));
 	    			  bestCurrent.setGain(myG);
-	    		  } 
+	    		  }
 	    	  }
 	      }
+	      		  System.out.println(bestCurrent.getNode1());
 			      iteratedPartition.removeNode(bestCurrent.getNode1(), iteratedPartition, iteratedPartition.partition0, 0);
 			      iteratedPartition.removeNode(bestCurrent.getNode2(), iteratedPartition, iteratedPartition.partition1, 1);
+
+			      System.out.println("x = " + x);
+			      System.out.println(iteratedPartition);
 			      storeImprovement += bestCurrent.getGain();
 			      gainIteration.add(storeImprovement);
-			      gainNodes1Iteration.addNode(bestCurrent.getNode1().getNodeName(),bestCurrent.getNode1().getD(),bestCurrent.getNode1().getI(), bestCurrent.getNode1().getE(), bestCurrent.getNode1().getX(), bestCurrent.getNode1().getY());
-			      gainNodes2Iteration.addNode(bestCurrent.getNode2().getNodeName(),bestCurrent.getNode2().getD(),bestCurrent.getNode2().getI(), bestCurrent.getNode2().getE(), bestCurrent.getNode2().getX(), bestCurrent.getNode2().getY());
-			      System.out.println("Iteration = " + x);
-			      System.out.println(bestCurrent.getNode1());
-			      myKl.interchange(bestCurrent.getNode1(), bestCurrent.getNode2(), optimizedPartition);
+			      //gainNodes1Iteration.addNode(bestCurrent.getNode1().getNodeName(),bestCurrent.getNode1().getD(),bestCurrent.getNode1().getI(), bestCurrent.getNode1().getE(), bestCurrent.getNode1().getX(), bestCurrent.getNode1().getY());
+			      //gainNodes2Iteration.addNode(bestCurrent.getNode2().getNodeName(),bestCurrent.getNode2().getD(),bestCurrent.getNode2().getI(), bestCurrent.getNode2().getE(), bestCurrent.getNode2().getX(), bestCurrent.getNode2().getY());
+			      //System.out.println("Iteration = " + x);
+			      //System.out.println(bestCurrent.getNode1());
+			      //myKl.interchange(bestCurrent.getNode1(), bestCurrent.getNode2(), optimizedPartition);
 	       	  
 			      for (int f = 0; f<optimizedPartition.partition0.size(); f++){                          //Calculate Parameters for partition0
 			          double myParameterArray[] = myKl.getNodeParameters(optimizedPartition, optimizedPartition.getNodeAtIndex(0, f), EdgesArr);
@@ -393,7 +398,7 @@ public class mainCode extends JFrame{
 	      int indexMax = gainIteration.indexOf(Collections.max(gainIteration));
 	      
 	      for (int l = 0; l<indexMax; l++){
-	    	  myKl.interchange(gainNodes1Iteration.getNodeAtIndex(l),gainNodes2Iteration.getNodeAtIndex(l),optimizedPartition);
+	    	  //myKl.interchange(gainNodes1Iteration.getNodeAtIndex(l),gainNodes2Iteration.getNodeAtIndex(l),optimizedPartition);
 	      }	      
       }
             
@@ -409,13 +414,16 @@ public class mainCode extends JFrame{
            Graphics2D g2 = (Graphics2D) g;
           int k = optimizedPartition.partition1.size();
           for (int l = 0; l<k; l++){
+        	//System.out.println("l = " + l);
+        	//System.out.println("Node1: =" + optimizedPartition.getNodeAtIndex(0,l));
+        	//System.out.println("Node2: =" + optimizedPartition.getNodeAtIndex(1,l));
             plotNode(g2, optimizedPartition.getNodeAtIndex(0,l));
             plotNode(g2, optimizedPartition.getNodeAtIndex(1,l));
           }
           
           k = EdgesArr.size();
           for (int l = 0; l<k; l++){
-            plotEdges(g2, EdgesArr.getEdgeAtIndex(l), optimizedPartition, nodesArr);
+            //plotEdges(g2, EdgesArr.getEdgeAtIndex(l), optimizedPartition, nodesArr);
           }           
           g2.setColor(new Color(0, 0, 0));
           g2.setFont(new Font("Purisa", Font.PLAIN, 25));
